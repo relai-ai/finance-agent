@@ -25,7 +25,8 @@ Optional environment variables:
 
 - `OPENAI_MODEL`: model used by the agent, default `gpt-5.4`
 - `AGENT_SESSION_ID`: reuse a specific terminal conversation session
-- `AGENT_LOG_FILE`: JSONL log path, default `logs/traces.jsonl`
+- `AGENT_LOG_FILE`: explicit JSONL log path override. By default each run
+  reserves the next numbered file, such as `logs/traces-001.jsonl`.
 
 ## Run
 
@@ -43,7 +44,7 @@ Manual smoke test:
 
 1. Ask a factual or current question that requires web retrieval.
 2. Ask a follow-up that depends on the previous answer.
-3. Confirm `logs/traces.jsonl` exists and contains trace/span records plus
+3. Confirm the printed `logs/traces-NNN.jsonl` file exists and contains trace/span records plus
    `turn` records.
 
 ## Development

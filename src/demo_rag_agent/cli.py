@@ -5,10 +5,18 @@ from __future__ import annotations
 import argparse
 import asyncio
 import os
+import re
 import uuid
 from pathlib import Path
 
-from agents import RawResponsesStreamEvent, Runner, SQLiteSession, add_trace_processor, flush_traces, trace
+from agents import (
+    RawResponsesStreamEvent,
+    Runner,
+    SQLiteSession,
+    add_trace_processor,
+    flush_traces,
+    trace,
+)
 from dotenv import load_dotenv
 from openai.types.responses import ResponseTextDeltaEvent
 
@@ -16,7 +24,8 @@ from demo_rag_agent.agent import build_agent
 from demo_rag_agent.logging import JsonlTraceProcessor, JsonlWriter, append_turn_record
 
 
-DEFAULT_LOG_FILE = "logs/traces.jsonl"
+DEFAULT_LOG_DIR = Path("logs")
+LOG_FILE_PATTERN = re.compile(r"^traces-(\d+)\.jsonl$")
 DEFAULT_SESSION_DIR = ".agent_sessions"
 EXIT_COMMANDS = {"/exit", "/quit"}
 
@@ -54,6 +63,41 @@ def build_session(session_id: str, session_dir: Path) -> SQLiteSession:
     return SQLiteSession(session_id, str(session_dir / "conversations.db"))
 
 
+def next_numbered_log_file(log_dir: Path = DEFAULT_LOG_DIR) -> Path:
+    """Reserve and return the next traces-NNN.jsonl file path."""
+    log_dir.mkdir(parents=True, exist_ok=True)
+    existing_numbers: list[int] = []
+    for path in log_dir.glob("traces-*.jsonl"):
+        match = LOG_FILE_PATTERN.match(path.name)
+        if match:
+            existing_numbers.append(int(match.group(1)))
+
+    next_number = max(existing_numbers, default=0) + 1
+    while True:
+        candidate = log_dir / f"traces-{next_number:03d}.jsonl"
+        try:
+            with candidate.open("x", encoding="utf-8"):
+                pass
+            return candidate
+        except FileExistsError:
+            next_number += 1
+
+
+def explicit_log_file(args: argparse.Namespace) -> Path | None:
+    """Return the explicit log path, if the user configured one."""
+    configured_log_file = args.log_file or os.getenv("AGENT_LOG_FILE")
+    if configured_log_file:
+        return Path(configured_log_file)
+    return None
+
+
+def resolve_log_file(args: argparse.Namespace) -> Path:
+    """Resolve the log path, using numbered files unless explicitly overridden."""
+    if configured_log_file := explicit_log_file(args):
+        return configured_log_file
+    return next_numbered_log_file()
+
+
 def trace_metadata(turn_number: int) -> dict[str, str]:
     """Build SDK trace metadata. Values must be strings for trace export."""
     return {"turn_number": str(turn_number)}
@@ -81,9 +125,11 @@ async def chat(args: argparse.Namespace) -> int:
         print("OPENAI_API_KEY is required. See .env.example.")
         return 2
 
-    log_file = Path(args.log_file or os.getenv("AGENT_LOG_FILE", DEFAULT_LOG_FILE))
+    uses_numbered_logs = explicit_log_file(args) is None
+    log_file = resolve_log_file(args)
     writer = JsonlWriter(log_file)
-    add_trace_processor(JsonlTraceProcessor(writer))
+    trace_processor = JsonlTraceProcessor(writer)
+    add_trace_processor(trace_processor)
 
     agent = build_agent()
     session_dir = Path(args.session_dir)
@@ -117,7 +163,12 @@ async def chat(args: argparse.Namespace) -> int:
             session_id = new_session_id()
             session = build_session(session_id, session_dir)
             turn_number = 0
+            if uses_numbered_logs:
+                log_file = next_numbered_log_file()
+                writer = JsonlWriter(log_file)
+                trace_processor.writer = writer
             print(f"Started new session: {session_id}")
+            print(f"Log file: {log_file}")
             continue
 
         turn_number += 1
@@ -166,7 +217,10 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Run the OpenAI Agents SDK web retrieval demo.")
     parser.add_argument("--session-id", help="Conversation session ID. Defaults to AGENT_SESSION_ID or a new ID.")
     parser.add_argument("--session-dir", default=DEFAULT_SESSION_DIR, help="Directory for SQLite session storage.")
-    parser.add_argument("--log-file", help=f"JSONL log file. Defaults to AGENT_LOG_FILE or {DEFAULT_LOG_FILE}.")
+    parser.add_argument(
+        "--log-file",
+        help="JSONL log file. Defaults to AGENT_LOG_FILE or the next logs/traces-NNN.jsonl file.",
+    )
     return parser
 
 

@@ -1,10 +1,17 @@
 import asyncio
+from argparse import Namespace
 
 from agents import RawResponsesStreamEvent
 from openai.types.responses import ResponseTextDeltaEvent
 
 from demo_rag_agent import cli
-from demo_rag_agent.cli import help_text, parse_command, trace_metadata
+from demo_rag_agent.cli import (
+    explicit_log_file,
+    help_text,
+    next_numbered_log_file,
+    parse_command,
+    trace_metadata,
+)
 
 
 def test_parse_command_normalizes_exit_commands() -> None:
@@ -31,6 +38,38 @@ def test_help_text_lists_commands() -> None:
 
 def test_trace_metadata_values_are_strings() -> None:
     assert trace_metadata(3) == {"turn_number": "3"}
+
+
+def test_next_numbered_log_file_starts_at_one(tmp_path) -> None:
+    path = next_numbered_log_file(tmp_path)
+
+    assert path == tmp_path / "traces-001.jsonl"
+    assert path.exists()
+
+
+def test_next_numbered_log_file_uses_next_highest_number(tmp_path) -> None:
+    (tmp_path / "traces-001.jsonl").write_text("", encoding="utf-8")
+    (tmp_path / "traces-003.jsonl").write_text("", encoding="utf-8")
+    (tmp_path / "traces-not-a-number.jsonl").write_text("", encoding="utf-8")
+
+    path = next_numbered_log_file(tmp_path)
+
+    assert path == tmp_path / "traces-004.jsonl"
+    assert path.exists()
+
+
+def test_explicit_log_file_prefers_cli_arg(monkeypatch) -> None:
+    monkeypatch.setenv("AGENT_LOG_FILE", "logs/from-env.jsonl")
+
+    assert explicit_log_file(Namespace(log_file="logs/from-arg.jsonl")).as_posix() == (
+        "logs/from-arg.jsonl"
+    )
+
+
+def test_explicit_log_file_uses_env(monkeypatch) -> None:
+    monkeypatch.setenv("AGENT_LOG_FILE", "logs/from-env.jsonl")
+
+    assert explicit_log_file(Namespace(log_file=None)).as_posix() == "logs/from-env.jsonl"
 
 
 def test_stream_agent_response_prints_text_deltas(monkeypatch, capsys) -> None:
