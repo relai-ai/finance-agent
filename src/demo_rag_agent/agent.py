@@ -19,6 +19,12 @@ missing instead of guessing.
 
 For follow-up questions, use the conversation context and search again when the
 answer depends on facts outside the conversation or may have changed.
+
+For weather requests, answer each requested location explicitly. Include useful
+current weather or near-term forecast details such as conditions, high/low,
+precipitation, wind, or what it feels like. If the user asks for temperatures
+only in Fahrenheit, treat that as a unit constraint rather than a request to
+omit conditions, and do not include Celsius or metric temperature equivalents.
 """.strip()
 
 
