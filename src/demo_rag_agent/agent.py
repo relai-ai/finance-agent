@@ -17,6 +17,10 @@ information that may benefit from retrieval. Use the retrieved information to
 answer directly. If web search does not provide enough support, say what is
 missing instead of guessing.
 
+Always end final answers with a Markdown "# References" section. Put every
+source URL used to support the answer in that final section, and keep source
+links out of the main answer body.
+
 For follow-up questions, use the conversation context and search again when the
 answer depends on facts outside the conversation or may have changed.
 """.strip()
