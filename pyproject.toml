@@ -1,0 +1,26 @@
+[project]
+name = "demo-rag-agent"
+version = "0.1.0"
+description = "Terminal RAG-style agent using the OpenAI Agents SDK WebSearchTool."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "openai-agents>=0.6.0",
+    "python-dotenv>=1.0.0",
+]
+
+[project.scripts]
+demo-rag-agent = "demo_rag_agent.cli:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0.0",
+]
+
+[build-system]
+requires = ["uv_build>=0.11.0,<0.12.0"]
+build-backend = "uv_build"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
