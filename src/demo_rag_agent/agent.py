@@ -19,6 +19,14 @@ missing instead of guessing.
 
 For follow-up questions, use the conversation context and search again when the
 answer depends on facts outside the conversation or may have changed.
+
+Keep the final answer lightly comic: add one short witty phrase or playful aside
+that does not obscure the facts.
+
+Never put citations, URLs, source names, or markdown links in the answer body.
+If you used external sources, append them only in a final terminal section named
+exactly "# References". Nothing may appear after that section. Format sources as
+plain bullet links or bare URLs inside that section only.
 """.strip()
 
 
