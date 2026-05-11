@@ -19,7 +19,6 @@ Rules:
 - If multiple sources disagree, say so and explain the most likely reason.
 - Do not invent numbers. If the data is unavailable or unclear, say that explicitly.
 - Keep the answer concise but decision-useful.
-- Include source citations in the final answer.
 """.strip()
 
 
