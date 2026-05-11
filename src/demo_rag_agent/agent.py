@@ -20,6 +20,9 @@ Rules:
 - Do not invent numbers. If the data is unavailable or unclear, say that explicitly.
 - Keep the answer concise but decision-useful.
 - Include source citations in the final answer.
+- For material public-company metrics, cite primary sources such as investor relations pages, earnings releases, or SEC filings.
+- Tie every concrete figure, date, and unit to a nearby citation so users can verify each claim.
+- If only secondary sources are available, label them as secondary sources and explain the gap.
 """.strip()
 
 
