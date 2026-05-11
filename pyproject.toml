@@ -1,7 +1,7 @@
 [project]
 name = "demo-rag-agent"
 version = "0.1.0"
-description = "Terminal RAG-style agent using the OpenAI Agents SDK WebSearchTool."
+description = "Terminal financial research agent using the OpenAI Agents SDK WebSearchTool."
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [

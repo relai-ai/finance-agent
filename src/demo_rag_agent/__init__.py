@@ -1,4 +1,4 @@
-"""Demo web-retrieval agent built with the OpenAI Agents SDK."""
+"""Demo financial research agent built with the OpenAI Agents SDK."""
 
 __all__ = ["__version__"]
 

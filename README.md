@@ -1,10 +1,12 @@
 # demo-rag-agent
 
-A small terminal chat demo using the OpenAI Agents SDK for web retrieval.
+A small terminal chat demo using the OpenAI Agents SDK for financial research.
 
-The agent uses the SDK's hosted `WebSearchTool`, keeps multi-turn conversation
-state in a local SQLite session, and mirrors SDK trace/span exports plus turn
-summaries into a JSONL log file.
+The agent uses the SDK's hosted `WebSearchTool` to answer finance-related
+questions with current web research, prefers primary sources such as investor
+relations pages and SEC filings, keeps multi-turn conversation state in a local
+SQLite session, and mirrors SDK trace/span exports plus turn summaries into a
+JSONL log file.
 
 ## Setup
 
@@ -42,7 +44,7 @@ Useful commands inside the chat:
 
 Manual smoke test:
 
-1. Ask a factual or current question that requires web retrieval.
+1. Ask a current finance question that requires web research.
 2. Ask a follow-up that depends on the previous answer.
 3. Confirm the printed `logs/traces-NNN.jsonl` file exists and contains trace/span records plus
    `turn` records.

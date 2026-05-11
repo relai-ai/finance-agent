@@ -137,7 +137,7 @@ async def chat(args: argparse.Namespace) -> int:
     session = build_session(session_id, session_dir)
     turn_number = 0
 
-    print("OpenAI Agents SDK web retrieval demo")
+    print("OpenAI Agents SDK financial research demo")
     print(f"Session: {session_id}")
     print(f"Log file: {log_file}")
     print("Type /help for commands.")
@@ -178,7 +178,7 @@ async def chat(args: argparse.Namespace) -> int:
 
         try:
             with trace(
-                "demo-rag-agent-turn",
+                "financial-research-agent-turn",
                 group_id=session_id,
                 metadata=trace_metadata(turn_number),
             ) as turn_trace:
@@ -214,7 +214,9 @@ async def chat(args: argparse.Namespace) -> int:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Run the OpenAI Agents SDK web retrieval demo.")
+    parser = argparse.ArgumentParser(
+        description="Run the OpenAI Agents SDK financial research demo."
+    )
     parser.add_argument("--session-id", help="Conversation session ID. Defaults to AGENT_SESSION_ID or a new ID.")
     parser.add_argument("--session-dir", default=DEFAULT_SESSION_DIR, help="Directory for SQLite session storage.")
     parser.add_argument(
