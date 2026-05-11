@@ -1,5 +1,5 @@
 [project]
-name = "demo-rag-agent"
+name = "finance-agent"
 version = "0.1.0"
 description = "Terminal financial research agent using the OpenAI Agents SDK WebSearchTool."
 readme = "README.md"
@@ -10,7 +10,7 @@ dependencies = [
 ]
 
 [project.scripts]
-demo-rag-agent = "demo_rag_agent.cli:main"
+finance-agent = "finance_agent.cli:main"
 
 [dependency-groups]
 dev = [

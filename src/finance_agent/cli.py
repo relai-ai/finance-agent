@@ -20,8 +20,8 @@ from agents import (
 from dotenv import load_dotenv
 from openai.types.responses import ResponseTextDeltaEvent
 
-from demo_rag_agent.agent import build_agent
-from demo_rag_agent.logging import JsonlTraceProcessor, JsonlWriter, append_turn_record
+from finance_agent.agent import build_agent
+from finance_agent.logging import JsonlTraceProcessor, JsonlWriter, append_turn_record
 
 
 DEFAULT_LOG_DIR = Path("logs")

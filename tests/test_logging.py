@@ -1,6 +1,6 @@
 import json
 
-from demo_rag_agent.logging import JsonlWriter, append_turn_record
+from finance_agent.logging import JsonlWriter, append_turn_record
 
 
 def test_jsonl_writer_appends_records(tmp_path) -> None:

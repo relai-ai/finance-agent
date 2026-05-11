@@ -4,8 +4,8 @@ from argparse import Namespace
 from agents import RawResponsesStreamEvent
 from openai.types.responses import ResponseTextDeltaEvent
 
-from demo_rag_agent import cli
-from demo_rag_agent.cli import (
+from finance_agent import cli
+from finance_agent.cli import (
     explicit_log_file,
     help_text,
     next_numbered_log_file,

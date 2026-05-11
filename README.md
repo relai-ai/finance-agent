@@ -1,4 +1,4 @@
-# demo-rag-agent
+# finance-agent
 
 A small terminal chat demo using the OpenAI Agents SDK for financial research.
 
@@ -33,7 +33,7 @@ Optional environment variables:
 ## Run
 
 ```bash
-uv run demo-rag-agent
+uv run finance-agent
 ```
 
 Useful commands inside the chat:

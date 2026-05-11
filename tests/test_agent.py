@@ -1,6 +1,6 @@
 from agents import WebSearchTool
 
-from demo_rag_agent.agent import AGENT_INSTRUCTIONS, build_agent
+from finance_agent.agent import AGENT_INSTRUCTIONS, build_agent
 
 
 def test_build_agent_uses_web_search_tool() -> None:
