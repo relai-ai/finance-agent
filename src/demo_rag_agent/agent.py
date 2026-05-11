@@ -1,5 +1,3 @@
-"""Agent construction for the terminal financial research demo."""
-
 from __future__ import annotations
 
 import os
