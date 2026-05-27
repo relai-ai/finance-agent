@@ -1,43 +1,33 @@
 import json
 
-from finance_agent.logging import JsonlWriter, append_turn_record
+from finance_agent.logging import ConversationLog, append_round
 
 
-def test_jsonl_writer_appends_records(tmp_path) -> None:
-    path = tmp_path / "logs" / "traces.jsonl"
-    writer = JsonlWriter(path)
+def test_conversation_log_appends_rounds(tmp_path) -> None:
+    path = tmp_path / "logs" / "conversation.json"
+    log = ConversationLog(path)
 
-    writer.append({"record_type": "example", "value": {"nested": True}})
-    writer.append({"record_type": "second", "value": 2})
+    log.append_round(user="first question", assistant="first answer")
+    log.append_round(user="second question", assistant="second answer")
 
-    records = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines()]
-    assert records == [
-        {"record_type": "example", "value": {"nested": True}},
-        {"record_type": "second", "value": 2},
-    ]
+    assert json.loads(path.read_text(encoding="utf-8")) == {
+        "rounds": [
+            {"user": "first question", "assistant": "first answer"},
+            {"user": "second question", "assistant": "second answer"},
+        ]
+    }
 
 
-def test_append_turn_record_writes_expected_shape(tmp_path) -> None:
-    path = tmp_path / "traces.jsonl"
-    writer = JsonlWriter(path)
+def test_append_round_writes_expected_shape(tmp_path) -> None:
+    path = tmp_path / "conversation.json"
+    log = ConversationLog(path)
 
-    append_turn_record(
-        writer,
-        session_id="session-1",
-        turn_number=3,
-        trace_id="trace_123",
+    append_round(
+        log,
         user_input="question",
         final_answer="answer",
-        usage={"total_tokens": 10},
-        status="ok",
     )
 
-    record = json.loads(path.read_text(encoding="utf-8"))
-    assert record["record_type"] == "turn"
-    assert record["session_id"] == "session-1"
-    assert record["turn_number"] == 3
-    assert record["trace_id"] == "trace_123"
-    assert record["user_input"] == "question"
-    assert record["final_answer"] == "answer"
-    assert record["usage"] == {"total_tokens": 10}
-    assert record["status"] == "ok"
+    assert json.loads(path.read_text(encoding="utf-8")) == {
+        "rounds": [{"user": "question", "assistant": "answer"}]
+    }

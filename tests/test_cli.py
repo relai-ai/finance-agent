@@ -10,7 +10,6 @@ from finance_agent.cli import (
     help_text,
     next_numbered_log_file,
     parse_command,
-    trace_metadata,
 )
 
 
@@ -36,25 +35,21 @@ def test_help_text_lists_commands() -> None:
     assert "/quit" in text
 
 
-def test_trace_metadata_values_are_strings() -> None:
-    assert trace_metadata(3) == {"turn_number": "3"}
-
-
 def test_next_numbered_log_file_starts_at_one(tmp_path) -> None:
     path = next_numbered_log_file(tmp_path)
 
-    assert path == tmp_path / "traces-001.jsonl"
+    assert path == tmp_path / "conversation-001.json"
     assert path.exists()
 
 
 def test_next_numbered_log_file_uses_next_highest_number(tmp_path) -> None:
-    (tmp_path / "traces-001.jsonl").write_text("", encoding="utf-8")
-    (tmp_path / "traces-003.jsonl").write_text("", encoding="utf-8")
-    (tmp_path / "traces-not-a-number.jsonl").write_text("", encoding="utf-8")
+    (tmp_path / "conversation-001.json").write_text("", encoding="utf-8")
+    (tmp_path / "conversation-003.json").write_text("", encoding="utf-8")
+    (tmp_path / "conversation-not-a-number.json").write_text("", encoding="utf-8")
 
     path = next_numbered_log_file(tmp_path)
 
-    assert path == tmp_path / "traces-004.jsonl"
+    assert path == tmp_path / "conversation-004.json"
     assert path.exists()
 
 

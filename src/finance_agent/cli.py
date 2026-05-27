@@ -13,19 +13,16 @@ from agents import (
     RawResponsesStreamEvent,
     Runner,
     SQLiteSession,
-    add_trace_processor,
-    flush_traces,
-    trace,
 )
 from dotenv import load_dotenv
 from openai.types.responses import ResponseTextDeltaEvent
 
 from finance_agent.agent import build_agent
-from finance_agent.logging import JsonlTraceProcessor, JsonlWriter, append_turn_record
+from finance_agent.logging import ConversationLog, append_round
 
 
 DEFAULT_LOG_DIR = Path("logs")
-LOG_FILE_PATTERN = re.compile(r"^traces-(\d+)\.jsonl$")
+LOG_FILE_PATTERN = re.compile(r"^conversation-(\d+)\.json$")
 DEFAULT_SESSION_DIR = ".agent_sessions"
 EXIT_COMMANDS = {"/exit", "/quit"}
 
@@ -64,17 +61,17 @@ def build_session(session_id: str, session_dir: Path) -> SQLiteSession:
 
 
 def next_numbered_log_file(log_dir: Path = DEFAULT_LOG_DIR) -> Path:
-    """Reserve and return the next traces-NNN.jsonl file path."""
+    """Reserve and return the next conversation-NNN.json file path."""
     log_dir.mkdir(parents=True, exist_ok=True)
     existing_numbers: list[int] = []
-    for path in log_dir.glob("traces-*.jsonl"):
+    for path in log_dir.glob("conversation-*.json"):
         match = LOG_FILE_PATTERN.match(path.name)
         if match:
             existing_numbers.append(int(match.group(1)))
 
     next_number = max(existing_numbers, default=0) + 1
     while True:
-        candidate = log_dir / f"traces-{next_number:03d}.jsonl"
+        candidate = log_dir / f"conversation-{next_number:03d}.json"
         try:
             with candidate.open("x", encoding="utf-8"):
                 pass
@@ -96,11 +93,6 @@ def resolve_log_file(args: argparse.Namespace) -> Path:
     if configured_log_file := explicit_log_file(args):
         return configured_log_file
     return next_numbered_log_file()
-
-
-def trace_metadata(turn_number: int) -> dict[str, str]:
-    """Build SDK trace metadata. Values must be strings for trace export."""
-    return {"turn_number": str(turn_number)}
 
 
 async def stream_agent_response(agent, user_input: str, session: SQLiteSession) -> tuple[str, object]:
@@ -127,15 +119,12 @@ async def chat(args: argparse.Namespace) -> int:
 
     uses_numbered_logs = explicit_log_file(args) is None
     log_file = resolve_log_file(args)
-    writer = JsonlWriter(log_file)
-    trace_processor = JsonlTraceProcessor(writer)
-    add_trace_processor(trace_processor)
+    conversation_log = ConversationLog(log_file)
 
     agent = build_agent()
     session_dir = Path(args.session_dir)
     session_id = args.session_id or os.getenv("AGENT_SESSION_ID") or new_session_id()
     session = build_session(session_id, session_dir)
-    turn_number = 0
 
     print("OpenAI Agents SDK financial research demo")
     print(f"Session: {session_id}")
@@ -162,53 +151,27 @@ async def chat(args: argparse.Namespace) -> int:
         if command == "new":
             session_id = new_session_id()
             session = build_session(session_id, session_dir)
-            turn_number = 0
             if uses_numbered_logs:
                 log_file = next_numbered_log_file()
-                writer = JsonlWriter(log_file)
-                trace_processor.writer = writer
+                conversation_log = ConversationLog(log_file)
             print(f"Started new session: {session_id}")
             print(f"Log file: {log_file}")
             continue
 
-        turn_number += 1
         final_answer: str | None = None
-        trace_id: str | None = None
-        usage = None
 
         try:
-            with trace(
-                "financial-research-agent-turn",
-                group_id=session_id,
-                metadata=trace_metadata(turn_number),
-            ) as turn_trace:
-                active_trace = getattr(turn_trace, "trace", None)
-                trace_id = getattr(active_trace, "trace_id", None)
-                final_answer, usage = await stream_agent_response(agent, user_input, session)
-
-            flush_traces()
-            append_turn_record(
-                writer,
-                session_id=session_id,
-                turn_number=turn_number,
-                trace_id=trace_id,
+            final_answer, _usage = await stream_agent_response(agent, user_input, session)
+            append_round(
+                conversation_log,
                 user_input=user_input,
                 final_answer=final_answer,
-                usage=usage,
-                status="ok",
             )
         except Exception as exc:
-            flush_traces()
-            append_turn_record(
-                writer,
-                session_id=session_id,
-                turn_number=turn_number,
-                trace_id=trace_id,
+            append_round(
+                conversation_log,
                 user_input=user_input,
                 final_answer=final_answer,
-                usage=usage,
-                status="error",
-                error=repr(exc),
             )
             print(f"\nError: {exc}")
 
@@ -221,7 +184,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--session-dir", default=DEFAULT_SESSION_DIR, help="Directory for SQLite session storage.")
     parser.add_argument(
         "--log-file",
-        help="JSONL log file. Defaults to AGENT_LOG_FILE or the next logs/traces-NNN.jsonl file.",
+        help="Conversation JSON log file. Defaults to AGENT_LOG_FILE or the next logs/conversation-NNN.json file.",
     )
     return parser
 
