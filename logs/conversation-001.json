@@ -1,8 +1,8 @@
 {
   "rounds": [
     {
-      "user": "Who is the CEO of JPMorgan Chase and how much money did the bank make last quarter?",
-      "assistant": "JPMorgan Chase’s CEO is **Jamie Dimon**. ([jpmorganchase.com](https://www.jpmorganchase.com/content/dam/jpmc/jpmorgan-chase-and-co/investor-relations/documents/quarterly-earnings/2025/1st-quarter/d88c408a-bbc9-4b06-b263-373f5b10b145.pdf?utm_source=openai))\n\nThe bank’s **most recent reported quarter** appears to be **Q1 2026**, in which JPMorgan Chase reported **net income of $16.5 billion**. The company’s investor relations page lists a **First-Quarter 2026 earnings call**, and the related earnings supplement is dated this month. ([jpmorganchase.com](https://www.jpmorganchase.com/corporate/investor-relations/investor-relations.htm?utm_source=openai))\n\nIf by “made” you mean **profit**, that’s **$16.5 billion net income** last quarter. If you want, I can also give you **revenue, EPS, and how it compared with expectations**."
+      "user": "Tell me a joke",
+      "assistant": "Why don’t bankers ever get lost?\n\nBecause they always follow the interest."
     }
   ]
 }
