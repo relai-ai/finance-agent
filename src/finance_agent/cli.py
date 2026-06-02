@@ -23,7 +23,7 @@ from finance_agent.logging import ConversationLog, append_round
 
 DEFAULT_LOG_DIR = Path("logs")
 LOG_FILE_PATTERN = re.compile(r"^conversation-(\d+)\.json$")
-DEFAULT_SESSION_DIR = ".agent_sessions"
+DEFAULT_SESSION_DIR = Path(".agent_sessions")
 EXIT_COMMANDS = {"/exit", "/quit"}
 
 
@@ -122,7 +122,7 @@ async def chat(args: argparse.Namespace) -> int:
     conversation_log = ConversationLog(log_file)
 
     agent = build_agent()
-    session_dir = Path(args.session_dir)
+    session_dir = DEFAULT_SESSION_DIR
     session_id = args.session_id or os.getenv("AGENT_SESSION_ID") or new_session_id()
     session = build_session(session_id, session_dir)
 
@@ -181,7 +181,6 @@ def build_parser() -> argparse.ArgumentParser:
         description="Run the OpenAI Agents SDK financial research demo."
     )
     parser.add_argument("--session-id", help="Conversation session ID. Defaults to AGENT_SESSION_ID or a new ID.")
-    parser.add_argument("--session-dir", default=DEFAULT_SESSION_DIR, help="Directory for SQLite session storage.")
     parser.add_argument(
         "--log-file",
         help="Conversation JSON log file. Defaults to AGENT_LOG_FILE or the next logs/conversation-NNN.json file.",

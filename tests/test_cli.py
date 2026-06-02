@@ -6,6 +6,7 @@ from openai.types.responses import ResponseTextDeltaEvent
 
 from finance_agent import cli
 from finance_agent.cli import (
+    DEFAULT_SESSION_DIR,
     explicit_log_file,
     help_text,
     next_numbered_log_file,
@@ -51,6 +52,10 @@ def test_next_numbered_log_file_uses_next_highest_number(tmp_path) -> None:
 
     assert path == tmp_path / "conversation-004.json"
     assert path.exists()
+
+
+def test_default_session_dir_is_agent_sessions() -> None:
+    assert DEFAULT_SESSION_DIR.as_posix() == ".agent_sessions"
 
 
 def test_explicit_log_file_prefers_cli_arg(monkeypatch) -> None:

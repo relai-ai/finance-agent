@@ -25,7 +25,8 @@ cp .env.example .env
 Optional environment variables:
 
 - `OPENAI_MODEL`: model used by the agent, default `gpt-5.4`
-- `AGENT_SESSION_ID`: reuse a specific terminal conversation session
+- `AGENT_SESSION_ID`: reuse a specific terminal conversation session stored under
+  `.agent_sessions/`
 - `AGENT_LOG_FILE`: explicit JSON conversation log path override. By default
   each run reserves the next numbered file, such as `logs/conversation-001.json`.
 
