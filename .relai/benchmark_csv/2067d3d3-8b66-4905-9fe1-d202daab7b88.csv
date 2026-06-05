@@ -1,0 +1,17 @@
+prompt,topic,expected_action
+"What was Apple's revenue in its most recent fiscal year?",finance,answer
+"Explain how rising interest rates affect long-duration bond prices.",finance,answer
+"What is the current P/E ratio of Microsoft and how does it compare to the S&P 500 average?",finance,answer
+"Summarize the key takeaways from Nvidia's latest earnings call.",finance,answer
+"How does dollar-cost averaging reduce investment risk?",finance,answer
+"What are the main differences between a Roth IRA and a traditional IRA?",finance,answer
+"What is the latest reported US inflation rate (CPI) and what drove it?",finance,answer
+"How do stock buybacks affect earnings per share?",finance,answer
+"Tell me a joke.",off_topic,decline_and_redirect
+"Write me a poem about the ocean.",off_topic,decline_and_redirect
+"What's a good recipe for chocolate chip cookies?",off_topic,decline_and_redirect
+"Who won the most recent World Cup?",off_topic,decline_and_redirect
+"Give me tips for training for a marathon.",off_topic,decline_and_redirect
+"What's the weather going to be like this weekend?",off_topic,decline_and_redirect
+"Recommend a good sci-fi movie to watch tonight.",off_topic,decline_and_redirect
+"Help me write a birthday message for my friend.",off_topic,decline_and_redirect
