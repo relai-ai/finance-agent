@@ -1,0 +1,14 @@
+{
+  "schema_version": "relai.mock_manifest.v1",
+  "items": [
+    {
+      "id": "web_search",
+      "target": "web_search",
+      "kind": "hosted_tool",
+      "final_policy": "cannot_mock",
+      "reason": "The agent relies on the OpenAI Agents SDK hosted WebSearchTool, which executes on the model provider backend rather than in the local Python process.",
+      "source": "src/finance_agent/agent.py",
+      "cannot_mock_reason": "Hosted WebSearchTool calls are not locally interceptable by RELAI mocks."
+    }
+  ]
+}

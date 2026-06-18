@@ -1,0 +1,18 @@
+{
+  "schema_version": "relai.runtime_manifest.v1",
+  "env": [
+    {
+      "name": "OPENAI_API_KEY",
+      "required": true,
+      "sensitive": true,
+      "reason": "Needed by the OpenAI Agents SDK to run the finance research agent."
+    },
+    {
+      "name": "OPENAI_MODEL",
+      "required": false,
+      "sensitive": false,
+      "reason": "Optional override for the model configured in the agent builder."
+    }
+  ],
+  "files": []
+}
