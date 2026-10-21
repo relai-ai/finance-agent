@@ -5,6 +5,7 @@ description = "Terminal financial research agent using the OpenAI Agents SDK Web
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
+    "certifi>=2026.10.19",
     "openai-agents>=0.6.0",
     "python-dotenv>=1.0.0",
 ]

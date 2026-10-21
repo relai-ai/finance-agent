@@ -59,3 +59,11 @@ Runtime artifacts are ignored by git:
 
 - `.agent_sessions/`
 - `logs/`
+
+## TLS trust updates
+
+Use the checked-in lockfile (`uv sync --locked`). This project requires
+`certifi>=2026.10.19` to distrust the compromised eMudhra certificate chains.
+Use uv 0.13.4 or newer, keep the operating system CA store updated, and recreate
+or resync existing environments. Rebuild any sandbox/template images from this
+updated source; a repository update does not patch already-running sessions.
